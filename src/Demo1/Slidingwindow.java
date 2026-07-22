@@ -1,5 +1,10 @@
 package Demo1;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class Slidingwindow {
 
     /**
@@ -104,5 +109,132 @@ public class Slidingwindow {
         return ret == -1 ? -1 : n - ret;
     }
 
-    
+    /**
+     * 水果成篮 https://leetcode.cn/problems/fruit-into-baskets/description/
+     * @param fruits
+     * @return
+     */
+    public int totalFruit(int[] fruits) {
+        int[] hash = new int[100001];
+        int n = fruits.length;
+        int left = 0 ,right = 0;
+        int kinds = 0;
+        int ret = 0;
+        while(right < n){
+            if(hash[fruits[right]] == 0) kinds++;
+            hash[fruits[right]]++;
+            while(kinds > 2){
+                hash[fruits[left]]--;
+                if(hash[fruits[left]] == 0)
+                    kinds--;
+                left++;
+            }
+            ret = Math.max(ret , right - left + 1);
+            right++;
+        }
+        return ret;
+    }
+
+    /**
+     * https://leetcode.cn/problems/find-all-anagrams-in-a-string/description/
+     * @param ss
+     * @param pp
+     * @return
+     */
+    public List<Integer> findAnagrams(String ss, String pp) {
+        List<Integer> ret = new ArrayList<>();
+        char[] s = ss.toCharArray();
+        char[] p = pp.toCharArray();
+
+        int[] hash1 = new int[26];
+        for(char ch : p) hash1[ch - 'a']++;
+        int[] hash2 = new int[26];
+
+        int left = 0 ,right = 0 , m = p.length;
+        int n = s.length , count =0;
+        while(right < n){
+            char in = s[right];
+            if(++hash2[in - 'a'] <= hash1[in - 'a']) count++;
+            if(right - left + 1 > m){
+                char out = s[left++];
+                if(hash2[out - 'a']-- <= hash1[out - 'a']) count--;
+            }
+            if(count == m){
+                ret.add(left);
+            }
+            right++;
+        }
+        return ret;
+    }
+
+    /**
+     * 串联所有单词的子串   https://leetcode.cn/problems/substring-with-concatenation-of-all-words/
+     * @param s
+     * @param words
+     * @return
+     */
+    public List<Integer> findSubstring(String s, String[] words) {
+        List<Integer> ret = new ArrayList<>();
+        Map<String,Integer> hash1 = new HashMap<>();
+        for(String str : words) hash1.put(str , hash1.getOrDefault(str , 0) + 1);
+        int n = s.length();
+        int m = words.length;
+        String str = words[0];
+        int len = str.length();
+        //外层循环
+        for(int i = 0 ; i < len ;i++){
+            int right = i , left = i; int count = 0;
+            Map<String,Integer> hash2 = new HashMap<>();
+            while(right <= n - len){
+                String in = s.substring(right , right + len);
+                hash2.put(in , hash2.getOrDefault(in , 0) + 1);
+                if(hash2.get(in) <= hash1.getOrDefault(in, 0)) count++;
+                if(right - left + 1 > m * len){
+                    String out = s.substring(left , left + len);
+                    if(hash2.get(out) <= hash1.getOrDefault(out , 0)) count--;
+                    hash2.put(out , hash2.get(out) - 1);
+                    left += len;
+                }
+                if(count == m) ret.add(left);
+                right += len;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 最⼩覆盖⼦串 https://leetcode.cn/problems/minimum-window-substring/
+     * @param ss
+     * @param tt
+     * @return
+     */
+    public String minWindow(String ss, String tt) {
+        char[] s = ss.toCharArray();
+        char[] t = tt.toCharArray();
+        int[] hash1 = new int[128];
+        int kinds = 0;
+        for(char ch : t)
+            if(hash1[ch]++ == 0) kinds++;
+        int[] hash2 = new int[128];
+        int n = s.length;
+        int left = 0 , right = 0 , count = 0;
+        int min = Integer.MAX_VALUE , minbegin = -1;
+        while(right < n){
+            //进窗口
+            char in = s[right];
+            if(++hash2[in] == hash1[in]) count++; //进窗口 + 维护count
+            //判断
+            while(count == kinds){
+                //更新结果
+                if(right - left + 1 < min){
+                    minbegin = left;
+                    min = right - left + 1;
+                }
+                char out = s[left++];
+                if(hash2[out]-- == hash1[out]) count--; //出窗口 + 维护count
+            }
+            right++;
+        }
+        return  minbegin == -1 ? new String():ss.substring(minbegin , minbegin + min);
+    }
 }
