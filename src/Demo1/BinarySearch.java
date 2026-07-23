@@ -89,4 +89,69 @@ public class BinarySearch {
         }
         return nums[right] >= target ? right : right + 1;
     }
+
+    /**
+     * ⼭峰数组的峰顶 https://leetcode.cn/problems/peak-index-in-a-mountain-array/
+     * @param arr
+     * @return
+     */
+    public int peakIndexInMountainArray(int[] arr) {
+        int n = arr.length;
+        int left = 0 , right = n - 1;
+        while(left < right){
+            int mid = left + (right - left) /2;
+            if(arr[mid] < arr[mid + 1]) left = mid + 1;
+            else right = mid;
+        }
+        return right;
+    }
+
+    /**
+     * 寻找峰值 https://leetcode.cn/problems/find-peak-element/
+     * @param nums
+     * @return
+     */
+    public int findPeakElement(int[] nums) {
+        int n = nums.length;
+        int left = 0 , right = n - 1;
+        while(left < right){
+            int mid = left + (right - left)/2;
+            if(nums[mid] < nums[mid + 1]) left = mid + 1;
+            else right = mid;
+        }
+        return right;
+    }
+
+    /**
+     * 搜索旋转排序数组中的最⼩值
+     * https://leetcode.cn/problems/find-minimum-in-rotated-sorted-array/
+     * @param nums
+     * @return
+     */
+    public int findMin(int[] nums) {
+        int n = nums.length;
+        int left = 0 ,right = n - 1;
+        while(left < right){
+            int mid = left + (right - left)/2;
+            if(nums[mid] > nums[n - 1]) left = mid + 1;
+            else right = mid;
+        }
+        return nums[right];
+    }
+
+    /**
+     * 0〜n-1 中缺失的数字  https://leetcode.cn/problems/que-shi-de-shu-zi-lcof/
+     * @param records
+     * @return
+     */
+    public int takeAttendance(int[] records) {
+        int n = records.length;
+        int left = 0 , right = n - 1;
+        while(left < right){
+            int mid = left + (right - left) /2;
+            if(mid == records[mid]) left = mid + 1;
+            else right = mid;
+        }
+        return left == records[left] ? left + 1 : left;
+    }
 }
