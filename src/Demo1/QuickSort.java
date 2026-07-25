@@ -1,5 +1,7 @@
 package Demo1;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class QuickSort {
@@ -100,5 +102,163 @@ public class QuickSort {
         else qsort(nums , right , r , cnt - a - b);
     }
 
+
+    int[] tmp;
+
+    /**
+     * 归并排序  https://leetcode.cn/problems/sort-an-array/
+     * @param nums
+     * @return
+     */
+    public int[] sortArray1(int[] nums) {
+        tmp = new int[nums.length];
+        mergeSort(nums , 0 , nums.length - 1);
+        return nums;
+    }
+    public void mergeSort(int[] nums , int left ,int right){
+        if(left >= right) return;
+        int mid = left + (right - left)/2;
+        mergeSort(nums , left , mid);
+        mergeSort(nums , mid + 1 , right);
+        int cur1 = left , cur2 = mid + 1 , i =0;
+        while(cur1 <= mid && cur2 <= right){
+            tmp[i++] = nums[cur1] <= nums[cur2] ? nums[cur1++] : nums[cur2++];
+        }
+        while(cur1 <= mid) tmp[i++] = nums[cur1++];
+        while(cur2 <= right) tmp[i++] = nums[cur2++];
+        for(int j = left; j <= right; j++)
+            nums[j] = tmp[j - left];
+    }
+
+    int ret;
+    /**
+     * 数组中的逆序对  https://leetcode.cn/problems/shu-zu-zhong-de-ni-xu-dui-lcof/
+     * @param record
+     * @return
+     */
+    public int reversePairs(int[] record) {
+        tmp = new int[record.length];
+        ret = 0;
+        mergeSort2(record , 0 , record.length - 1);
+        return ret;
+    }
+
+    public void mergeSort2(int[] nums , int left ,int right){
+        if(left >= right) return ;
+        int mid = left + (right - left)/2;
+
+        mergeSort(nums , left , mid);
+        mergeSort(nums , mid + 1 , right);
+
+        int cur1 = left , cur2 = mid + 1 , i = 0;
+        while(cur1 <= mid && cur2 <= right){
+            if(nums[cur1] <= nums[cur2]) tmp[i++] = nums[cur1++];
+            else{
+                tmp[i++] = nums[cur2++];
+                ret += mid - cur1 + 1;
+            }
+        }
+        while(cur1 <= mid) tmp[i++] = nums[cur1++];
+        while(cur2 <= right) tmp[i++] = nums[cur2++];
+
+        for (int j = left; j <= right; j++)
+            nums[j] = tmp[j - left];
+
+    }
+    int[] rett;
+    int[] index;
+    int[] indextmp;
+
+    /**
+     * 计算右侧⼩于当前元素的个数
+     * https://leetcode.cn/problems/count-of-smaller-numbers-after-self/
+     * @param nums
+     * @return
+     */
+    public List<Integer> countSmaller(int[] nums) {
+        int n = nums.length;
+        rett = new int[n];
+        index = new int[n];
+        tmp = new int[n];
+        indextmp = new int[n];
+        for(int i = 0 ;i < n ;i++)
+            index[i] = i;
+        mergeSort3(nums ,0 ,n -1);
+        List<Integer> l = new ArrayList<>();
+        for(int x : rett)
+            l.add(x);
+        return l;
+    }
+
+    public void mergeSort3(int[] nums , int left , int right){
+        if(left >= right) return ;
+        int mid = left + (right - left)/2;
+        mergeSort(nums , left , mid);
+        mergeSort(nums , mid + 1 , right);
+        int cur1 = left , cur2 = mid + 1 ,i = 0;
+        while(cur1 <= mid && cur2 <= right){
+            if(nums[cur1] <= nums[cur2]){
+                tmp[i] = nums[cur2];
+                indextmp[i++] = index[cur2++];
+            }else{
+                tmp[i] = nums[cur1];
+                rett[index[cur1]] += right - cur2 + 1;
+                indextmp[i++] = index[cur1++];
+            }
+        }
+        while(cur1 <= mid){
+            tmp[i] = nums[cur1];
+            indextmp[i++] = index[cur1++];
+        }
+        while(cur2 <= right){
+            tmp[i] = nums[cur2];
+            indextmp[i++] = index[cur2++];
+        }
+        for(int j = left; j <= right; j++){
+            nums[j] = tmp[j - left];
+            index[j] = indextmp[j - left];
+        }
+    }
+
+    int count;
+
+    /**
+     * 翻转对  https://leetcode.cn/problems/reverse-pairs/description/
+     * @param nums
+     * @return
+     */
+    public int reversePairs2(int[] nums) {
+        int n = nums.length;
+        tmp = new int[n];
+        count = 0;
+        mergeSort4(nums, 0, n - 1);
+        return count;
+    }
+
+    public void mergeSort4(int[] nums, int left, int right) {
+        if (left >= right) return;
+        int mid = left + (right - left) / 2;
+        mergeSort(nums, left, mid);
+        mergeSort(nums, mid + 1, right);
+
+        // 第一步：单独计数（双指针，利用两半各自有序）
+        int j = mid + 1;
+        for (int i = left; i <= mid; i++) {
+            while (j <= right && (long) nums[i] > 2L * nums[j]) j++;
+            count += j - (mid + 1);  // j 之前的右边元素都满足 2倍关系
+        }
+
+        // 第二步：正常按值合并（和排序一样）
+        int cur1 = left, cur2 = mid + 1, i = 0;
+        while (cur1 <= mid && cur2 <= right) {
+            if (nums[cur1] <= nums[cur2]) tmp[i++] = nums[cur1++];
+            else tmp[i++] = nums[cur2++];
+        }
+        while (cur1 <= mid) tmp[i++] = nums[cur1++];
+        while (cur2 <= right) tmp[i++] = nums[cur2++];
+
+        for (int k = left; k <= right; k++)
+            nums[k] = tmp[k - left];
+    }
 
 }
